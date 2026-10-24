@@ -6994,8 +6994,8 @@ Retorne apenas o JSON sem crases ou markdown."""
                             arquivos_processar.append({'name': nome, 'tmp_path': tmp.name, 'data_extraida': extrair_data_do_nome_pdf(nome)})
                             
                     total_arquivos = len(arquivos_processar)
-                    
-                    def processar_chunk_ia(
+
+def processar_chunk_ia(
     arquivo_dict,
     chaves_api,
     modelo_gemini,
