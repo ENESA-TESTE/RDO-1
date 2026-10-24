@@ -7074,39 +7074,27 @@ def processar_chunk_ia(
         raise Exception(
             f"Erro OCR Local: {erro}"
         )
-                                
-                            except Exception as inner_e:
-                                erro_str = str(inner_e)
-                                if '429' in erro_str or 'RESOURCE_EXHAUSTED' in erro_str:
-                                    if tentativa < max_tentativas - 1:
-                                        if idx_chave_atual_local < len(chaves_api) - 1:
-                                            idx_chave_atual_local += 1
-                                            client_local = genai.Client(api_key=chaves_api[idx_chave_atual_local])
-                                            time.sleep(2)
-                                            continue
-                                        else:
-                                            time.sleep(12)
-                                            continue
-                                elif '503' in erro_str or 'UNAVAILABLE' in erro_str or 'high demand' in erro_str.lower():
-                                    if tentativa < max_tentativas - 1:
-                                        time.sleep(3 + (tentativa * 3))
-                                        continue
-                                raise Exception(f"Erro na IA: {inner_e}")
-                            finally:
-                                if arquivo_up:
-                                    try:
-                                        client_local.files.delete(name=arquivo_up.name)
-                                    except:
-                                        pass
 
                     import concurrent.futures
-                    modelo_usado = st.session_state.get('modelo_gemini', 'gemini-2.5-flash')
-                    
-                    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-                        future_to_chunk = {
-                            executor.submit(processar_chunk_ia, chunk, lista_chaves, modelo_usado, prompt_ia, RDC_Schema, old_cred): chunk
-                            for chunk in arquivos_processar
-                        }
+
+modelo_usado = st.session_state.get(
+    'modelo_gemini',
+    'gemini-2.5-flash'
+)
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    future_to_chunk = {
+        executor.submit(
+            processar_chunk_ia,
+            chunk,
+            lista_chaves,
+            modelo_usado,
+            prompt_ia,
+            RDC_Schema,
+            old_cred
+        ): chunk
+        for chunk in arquivos_processar
+    }
                         
                         completed = 0
                         for future in concurrent.futures.as_completed(future_to_chunk):
