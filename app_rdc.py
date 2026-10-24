@@ -7004,7 +7004,7 @@ Retorne apenas o JSON sem crases ou markdown."""
     _old_cred
 ):
 
-    tmp_path = arquivo_dict['tmp_path']
+    tmp_path = arquivo_dict["tmp_path"]
 
     try:
 
@@ -7019,9 +7019,13 @@ Retorne apenas o JSON sem crases ou markdown."""
         )
 
         if isinstance(dados_extraidos_lista, dict):
-            dados_extraidos_lista = [dados_extraidos_lista]
+            dados_extraidos_lista = [
+                dados_extraidos_lista
+            ]
 
-        data_do_nome = arquivo_dict.get('data_extraida')
+        data_do_nome = arquivo_dict.get(
+            "data_extraida"
+        )
 
         if data_do_nome:
 
@@ -7035,32 +7039,40 @@ Retorne apenas o JSON sem crases ou markdown."""
         else:
 
             for d in dados_extraidos_lista:
-                d["DATA"] = normalizar_data_brasil(
-                    d.get("DATA")
-                )
+
+                if d.get("DATA"):
+                    d["DATA"] = normalizar_data_brasil(
+                        d["DATA"]
+                    )
 
         for dados in dados_extraidos_lista:
 
-            if 'LOCAL' not in dados:
-                dados['LOCAL'] = ''
+            if "LOCAL" not in dados:
+                dados["LOCAL"] = ""
 
-            if 'AREA' not in dados:
-                dados['AREA'] = ''
+            if "AREA" not in dados:
+                dados["AREA"] = ""
 
-            dados['SUB'] = 1
-            dados['SUB_ATIVIDADE'] = dados.get(
-                'ATIVIDADE',
-                ''
+            if "CALDEIRA" not in dados:
+                dados["CALDEIRA"] = ""
+
+            dados["SUB"] = 1
+
+            dados["SUB_ATIVIDADE"] = dados.get(
+                "ATIVIDADE",
+                ""
             )
 
-            dados['LOCAL_ESPECIFICO'] = ''
-            dados['EFETIVO_ATIVIDADE'] = ''
+            dados["LOCAL_ESPECIFICO"] = ""
+
+            dados["EFETIVO_ATIVIDADE"] = ""
 
         return dados_extraidos_lista
 
-    except Exception as inner_e:
+    except Exception as erro:
+
         raise Exception(
-            f"Erro OCR: {inner_e}"
+            f"Erro OCR Local: {erro}"
         )
 
 
