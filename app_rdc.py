@@ -7074,38 +7074,6 @@ def processar_chunk_ia(
         raise Exception(
             f"Erro OCR Local: {erro}"
         )
-
-
-
-                                if isinstance(dados_extraidos_lista, dict):
-                                    dados_extraidos_lista = [dados_extraidos_lista]
-
-                                data_do_nome = arquivo_dict.get('data_extraida')
-                                if data_do_nome:
-                                    data_norm = normalizar_data_brasil(data_do_nome)
-                                    for d in dados_extraidos_lista:
-                                        d["DATA"] = data_norm
-                                else:
-                                    datas_encontradas = [normalizar_data_brasil(str(d.get("DATA")).strip()) for d in dados_extraidos_lista if d.get("DATA") and str(d.get("DATA")).strip() != ""]
-                                    if datas_encontradas:
-                                        data_consenso = max(set(datas_encontradas), key=datas_encontradas.count)
-                                        for d in dados_extraidos_lista:
-                                            d["DATA"] = data_consenso
-                                    else:
-                                        for d in dados_extraidos_lista:
-                                            d["DATA"] = normalizar_data_brasil(d.get("DATA"))
-
-                                for dados in dados_extraidos_lista:
-                                    if 'LOCAL' not in dados:
-                                        dados['LOCAL'] = ''
-                                    if 'AREA' not in dados:
-                                        dados['AREA'] = ''
-                                    dados['SUB'] = 1
-                                    dados['SUB_ATIVIDADE'] = dados.get('ATIVIDADE', '')
-                                    dados['LOCAL_ESPECIFICO'] = ''
-                                    dados['EFETIVO_ATIVIDADE'] = ''
-                                
-                                return dados_extraidos_lista
                                 
                             except Exception as inner_e:
                                 erro_str = str(inner_e)
