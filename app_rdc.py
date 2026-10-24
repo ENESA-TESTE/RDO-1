@@ -6995,23 +6995,16 @@ Retorne apenas o JSON sem crases ou markdown."""
                             
                     total_arquivos = len(arquivos_processar)
                     
-                    def processar_chunk_ia(arquivo_dict, chaves_api, modelo_gemini, prompt_ia, schema, _old_cred):
-                        import time
-                        import json
-                        import os
-                        import ast
-                        import re
-                        from google import genai
-                        
-                        tmp_path = arquivo_dict['tmp_path']
-                        max_tentativas = 4
-                        idx_chave_atual_local = 0
-                        client_local = genai.Client(
-    api_key=chaves_api[idx_chave_atual_local]
-)
+                    def processar_chunk_ia(
+    arquivo_dict,
+    chaves_api,
+    modelo_gemini,
+    prompt_ia,
+    schema,
+    _old_cred
+):
 
-for tentativa in range(max_tentativas):
-    arquivo_up = None
+    tmp_path = arquivo_dict['tmp_path']
 
     try:
 
@@ -7021,20 +7014,55 @@ for tentativa in range(max_tentativas):
         print(texto_extraido[:2000])
         print("=" * 100)
 
-        dados_extraidos_lista = interpretar_rdc(texto_extraido)
+        dados_extraidos_lista = interpretar_rdc(
+            texto_extraido
+        )
 
-       if isinstance(dados_extraidos_lista, dict):
-    dados_extraidos_lista = [dados_extraidos_lista]
+        if isinstance(dados_extraidos_lista, dict):
+            dados_extraidos_lista = [dados_extraidos_lista]
 
-data_do_nome = arquivo_dict.get('data_extraida')
+        data_do_nome = arquivo_dict.get('data_extraida')
 
-if data_do_nome:
-    data_norm = normalizar_data_brasil(data_do_nome)
+        if data_do_nome:
 
-    for d in dados_extraidos_lista:
-        d["DATA"] = data_norm
+            data_norm = normalizar_data_brasil(
+                data_do_nome
+            )
 
-return dados_extraidos_lista
+            for d in dados_extraidos_lista:
+                d["DATA"] = data_norm
+
+        else:
+
+            for d in dados_extraidos_lista:
+                d["DATA"] = normalizar_data_brasil(
+                    d.get("DATA")
+                )
+
+        for dados in dados_extraidos_lista:
+
+            if 'LOCAL' not in dados:
+                dados['LOCAL'] = ''
+
+            if 'AREA' not in dados:
+                dados['AREA'] = ''
+
+            dados['SUB'] = 1
+            dados['SUB_ATIVIDADE'] = dados.get(
+                'ATIVIDADE',
+                ''
+            )
+
+            dados['LOCAL_ESPECIFICO'] = ''
+            dados['EFETIVO_ATIVIDADE'] = ''
+
+        return dados_extraidos_lista
+
+    except Exception as inner_e:
+        raise Exception(
+            f"Erro OCR: {inner_e}"
+        )
+
 
 
                                 if isinstance(dados_extraidos_lista, dict):
