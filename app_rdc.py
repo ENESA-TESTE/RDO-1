@@ -7075,26 +7075,29 @@ def processar_chunk_ia(
             f"Erro OCR Local: {erro}"
         )
 
-                    import concurrent.futures
+        import concurrent.futures
 
-modelo_usado = st.session_state.get(
-    'modelo_gemini',
-    'gemini-2.5-flash'
-)
+        modelo_usado = st.session_state.get(
+            'modelo_gemini',
+            'gemini-2.5-flash'
+        )
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-    future_to_chunk = {
-        executor.submit(
-            processar_chunk_ia,
-            chunk,
-            lista_chaves,
-            modelo_usado,
-            prompt_ia,
-            RDC_Schema,
-            old_cred
-        ): chunk
-        for chunk in arquivos_processar
-    }
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=3
+        ) as executor:
+
+            future_to_chunk = {
+                executor.submit(
+                    processar_chunk_ia,
+                    chunk,
+                    lista_chaves,
+                    modelo_usado,
+                    prompt_ia,
+                    RDC_Schema,
+                    old_cred
+                ): chunk
+                for chunk in arquivos_processar
+            }
                         
                         completed = 0
                         for future in concurrent.futures.as_completed(future_to_chunk):
